@@ -6,7 +6,7 @@ The main purpose of the Magic Text widget is to adapt to the available space in 
 
 ## Features
 
-<img src="https://github.com/EnriqueSanVic/magic_text/blob/main/example/img/windows_magic_text_example.gif" width="100px" height="100px">
+<img src="https://github.com/EnriqueSanVic/magic_text/blob/main/example/img/windows_magic_text_example.gif" width="1017px" height="538px">
 <br />
 
 ## Getting started
