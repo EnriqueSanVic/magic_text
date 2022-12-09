@@ -6,21 +6,22 @@ The main purpose of the Magic Text widget is to adapt to the available space in 
 
 ## Features
 
-TODO: List what your package can do. Maybe include images, gifs, or videos.
+<img src="https://github.com/EnriqueSanVic/magic_text/example/img/windows_magic_text_example.gif" width="100px" height="100px">
+<br />
 
 ## Getting started
 
 ### Installing
 
 ```yaml
-  dependencies:
-    magic_text: ^0.0.1
+dependencies:
+  magic_text: ^0.0.1
 ```
 
 ###Import package in 
 
 ```dart
-  import 'package:magic_text/magic_text.dart';
+import 'package:magic_text/magic_text.dart';
 ```
 ## Usage
 
