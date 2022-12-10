@@ -23,7 +23,7 @@ dependencies:
   magic_text: ^0.0.1
 ```
 
-###Import package in 
+### Import 
 
 ```dart
 import 'package:magic_text/magic_text.dart';
