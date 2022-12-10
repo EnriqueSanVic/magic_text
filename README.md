@@ -30,6 +30,8 @@ import 'package:magic_text/magic_text.dart';
 ```
 ## Usage
 
+
+Instance MagicText widget:
 ```dart
 
 //Instance a MagicText widget and save in a constant.
