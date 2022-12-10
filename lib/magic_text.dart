@@ -41,6 +41,10 @@ class MagicText extends StatefulWidget {
         this.minFontSize,
         this.maxFontSize}) {
 
+
+    assert(textStyle.fontSize != null,
+    "The textStyle object must have a defined fontSize attribute.");
+
     assert(breakCharacter.length == 1,
     "The break character must be a string that only contains one character.");
 
