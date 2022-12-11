@@ -31,7 +31,7 @@ dependencies:
 
 #### Install with command line
 
-Run this command ```flutter pub magic_text``` then run ```flutter pub get```.
+Run this command ```flutter pub add magic_text``` then run ```flutter pub get```.
 
 ### Import 
 
@@ -58,6 +58,8 @@ const MagicText magicText = MagicText(
 );
 
 ```
+Full usage code examples: 
+<a src="https://github.com/EnriqueSanVic/magic_text/tree/main/example">Examples</a>
 
 ## Additional information
 Developed By Enrique Sánchez Vicente.
