@@ -1,4 +1,4 @@
-# Magic Text 🔤
+# Magic Text 🪄🔤
 
 Auto-responsive text widget that supports a multitude of parameters to control text rendering behaviour.
 
@@ -19,7 +19,11 @@ The main purpose of the Magic Text widget is to adapt to the available space in 
 
 ## Getting started
 
-### Installing
+### Installing ⬇️
+
+#### Install with command line
+
+Run this command ```flutter pub add magic_text``` then run ```flutter pub get```.
 
 #### Install with pubspec.yaml
 
@@ -28,10 +32,6 @@ Paste this line in dependencies section of pubspec.yaml file and run ```flutter 
 dependencies:
   magic_text: ^0.0.1
 ```
-
-#### Install with command line
-
-Run this command ```flutter pub add magic_text``` then run ```flutter pub get```.
 
 ### Import 
 
