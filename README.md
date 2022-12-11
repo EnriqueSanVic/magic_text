@@ -8,14 +8,14 @@ The main purpose of the Magic Text widget is to adapt to the available space in 
 
 Examples
 
-<div style="display: table;">
-    <div style="display: table-cell; vertical-align: middle;">
+<span style="display: table;">
+    <span style="display: table-cell; vertical-align: middle;">
         <img src="https://github.com/EnriqueSanVic/magic_text/blob/main/example/img/phone_app_magic_text_example.gif" width="239px" height="533px">
-    </div>
-    <div style="display: table-cell; vertical-align: middle;">
+    </span>
+    <span style="display: table-cell; vertical-align: middle;">
         <img src="https://github.com/EnriqueSanVic/magic_text/blob/main/example/img/windows_magic_text_example.gif" width="500px" height="264px">
-    </div>
-</div>
+    </span>
+</span>
 
 ## Getting started
 
