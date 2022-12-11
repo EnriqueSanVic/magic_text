@@ -8,9 +8,10 @@ The main purpose of the Magic Text widget is to adapt to the available space in 
 
 Examples
 
-<img src="https://github.com/EnriqueSanVic/magic_text/blob/main/example/img/phone_app_magic_text_example.gif" width="126px" height="280px">
-<img src="https://github.com/EnriqueSanVic/magic_text/blob/main/example/img/windows_magic_text_example.gif" width="500px" height="264px">
-
+<p align="center">
+  <img src="https://github.com/EnriqueSanVic/magic_text/blob/main/example/img/phone_app_magic_text_example.gif" width="126px" height="280px">
+  <img src="https://github.com/EnriqueSanVic/magic_text/blob/main/example/img/windows_magic_text_example.gif" width="500px" height="264px">
+</p>
 
 ## Getting started
 
