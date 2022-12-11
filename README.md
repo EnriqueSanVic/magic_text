@@ -6,6 +6,12 @@ The main purpose of the Magic Text widget is to adapt to the available space in 
 
 ## Features
 
+<b>smartSizeMode</b>: Enable or disable smart text size mode so that the widget chooses the appropriate text size from the given maxSize - minSize range so that there are the fewest number of word breaks in line breaks.
+
+<b>useAsyncMode</b>: Allows the widget to be re-rendered asynchronously, this means that it is not the main rendering thread of the Flutter framework that builds the element, which causes the widget to update after all other GUI elements are loaded, this can speed up the loading time of a view. This mode is recommended to be enabled when using wide text size ranges between maxSize - minSize in smartSizeMode, because it can cause slow rendering times, if asynchronous mode is enabled, the view will load first and then the MagicText widget will be rendered when ready without blocking the main rendering thread optimising the loading time.
+
+Async Mode: 
+
 ## Examples
 
 <p align="center">
@@ -43,7 +49,7 @@ const MagicText magicText = MagicText(
   maxFontSize: 40,
   maxLines: 4,
   textStyle: const TextStyle(
-      fontSize: 20,
+      fontSize: 20, //It is mandatory that the textStyle has a fontsize.
       fontWeight: FontWeight.bold
   ),
 );
