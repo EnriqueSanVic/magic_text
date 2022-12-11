@@ -59,7 +59,8 @@ const MagicText magicText = MagicText(
 
 ```
 Full usage code examples: 
-<a src="https://github.com/EnriqueSanVic/magic_text/tree/main/example">Examples</a>
+[Simple Desktop app example](example/desktop_app_example.dart)
+[Mobile app example](example/mobile_app_example.dart)
 
 ## Additional information
 Developed By Enrique Sánchez Vicente.
