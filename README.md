@@ -1,4 +1,4 @@
-# Magic Text
+# Magic Text 🔤
 
 Auto-responsive text widget that supports a multitude of parameters to control text rendering behaviour.
 
@@ -6,7 +6,7 @@ The main purpose of the Magic Text widget is to adapt to the available space in 
 
 ## Features
 
-Examples
+## Examples
 
 <p align="center">
   <img src="https://github.com/EnriqueSanVic/magic_text/blob/main/example/img/phone_app_magic_text_example.gif" width="126px" height="280px">
