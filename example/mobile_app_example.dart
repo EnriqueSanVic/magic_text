@@ -95,9 +95,9 @@ class _MyHomePageState extends State<MyHomePage> {
 
                 MagicText magicText = MagicText(
                   "The Flutter framework has been optimized to make rerunning build methods fast, so that you can just rebuild anything that needs updating rather than having to individually change instances of widgets.",
-                  breakCharacter: '-',
-                  useSmartSizeMode: true,
-                  useAsyncMode: true,
+                  breakWordCharacter: '-',
+                  smartSizeMode: true,
+                  asyncMode: true,
                   minFontSize: 19,
                   maxFontSize: 26,
                   textStyle: const TextStyle(

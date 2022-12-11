@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 class MagicText extends StatefulWidget {
 
   String data;
-  String breakCharacter;
+  String? breakWordCharacter = '-';
   TextStyle textStyle;
   StrutStyle? strutStyle;
   TextAlign? textAlign;
@@ -18,17 +18,17 @@ class MagicText extends StatefulWidget {
   TextHeightBehavior? textHeightBehavior;
   Color? selectionColor;
 
-  bool useSmartSizeMode = false;
-  bool useAsyncMode = false;
+  bool smartSizeMode = true;
+  bool asyncMode = false;
 
   int? minFontSize, maxFontSize;
 
   MagicText(this.data,
       {super.key,
-        required this.breakCharacter,
-        required this.useSmartSizeMode,
+        required this.smartSizeMode,
+        required this.asyncMode,
         required this.textStyle,
-        required this.useAsyncMode,
+        this.breakWordCharacter,
         this.strutStyle,
         this.textAlign,
         this.locale,
@@ -45,10 +45,10 @@ class MagicText extends StatefulWidget {
     assert(textStyle.fontSize != null,
     "The textStyle object must have a defined fontSize attribute.");
 
-    assert(breakCharacter.length == 1,
+    assert(breakWordCharacter!.length == 1,
     "The break character must be a string that only contains one character.");
 
-    if(useSmartSizeMode){
+    if(smartSizeMode){
       assert(
       minFontSize != null &&
           maxFontSize != null &&
@@ -68,7 +68,7 @@ class MagicTextState extends State<MagicText> {
   static const int SPACE_CODE_UNIT = 32;
   static const int END_OF_LINE_CODE_UNIT = 10;
 
-  double? actualMaxWidth;
+  double? _actualMaxWidth;
   TextStyle? _textStyle;
 
   @override
@@ -79,7 +79,7 @@ class MagicTextState extends State<MagicText> {
   }
 
   void _changeOptimizeTextStyle() {
-    if (widget.useAsyncMode) {
+    if (widget.asyncMode) {
           () async {
         WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
           if (mounted) {
@@ -111,10 +111,10 @@ class MagicTextState extends State<MagicText> {
       copyOfTextStyle = widget.textStyle.copyWith(fontSize: i.toDouble());
 
       resultString = _processTextWrapEndOfLineCharacter(widget.data,
-          copyOfTextStyle, actualMaxWidth!, widget.breakCharacter)!;
+          copyOfTextStyle, _actualMaxWidth!, widget.breakWordCharacter!)!;
 
       countBreakCharacters =
-          widget.breakCharacter.allMatches(resultString).length;
+          widget.breakWordCharacter!.allMatches(resultString).length;
 
       if (minStepCharacters == null) {
         minStepCharacters = countBreakCharacters;
@@ -266,16 +266,16 @@ class MagicTextState extends State<MagicText> {
     return LayoutBuilder(
         builder: (BuildContext context, BoxConstraints constraints) {
           ///only recalculate text style if change maxWidth of constraints
-          if (actualMaxWidth != constraints.maxWidth) {
-            actualMaxWidth = constraints.maxWidth;
-            if (widget.useSmartSizeMode) {
+          if (_actualMaxWidth != constraints.maxWidth) {
+            _actualMaxWidth = constraints.maxWidth;
+            if (widget.smartSizeMode) {
               _changeOptimizeTextStyle();
             }
           }
 
           return Text(
               _processTextWrapEndOfLineCharacter(widget.data, _textStyle!,
-                  actualMaxWidth!, widget.breakCharacter)!,
+                  _actualMaxWidth!, widget.breakWordCharacter!)!,
               style: _textStyle,
               strutStyle: widget.strutStyle,
               textAlign: widget.textAlign,
