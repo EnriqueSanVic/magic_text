@@ -44,10 +44,9 @@ const MagicText magicText = MagicText(
   "The Flutter framework has been optimized to make rerunning build methods fast, so that you can just rebuild anything that needs updating rather than having to individually change instances of widgets.",
   breakCharacter: '-',
   useSmartSizeMode: true,
-  useAsyncMode: true,
+  asyncMode: true,
   minFontSize: 20,
   maxFontSize: 40,
-  maxLines: 4,
   textStyle: const TextStyle(
       fontSize: 20, //It is mandatory that the textStyle has a fontsize.
       fontWeight: FontWeight.bold
