@@ -58,9 +58,11 @@ const MagicText magicText = MagicText(
 );
 
 ```
-Full usage code examples: 
+Full usage code examples:
+<br>
 [Simple Desktop app example](example/desktop_app_example.dart)
+<br>
 [Mobile app example](example/mobile_app_example.dart)
-
+<br>
 ## Additional information
 Developed By Enrique Sánchez Vicente.
