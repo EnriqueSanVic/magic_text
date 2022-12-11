@@ -21,6 +21,7 @@ The main purpose of the Magic Text widget is to adapt to the available space in 
 
 ### Installing
 
+Paste this line in dependencies section of pubspec.yaml file and run ```bash flutter pub get``` command.
 ```yaml
 dependencies:
   magic_text: ^0.0.1
