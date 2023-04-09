@@ -1,4 +1,4 @@
-# Magic Text 🪄🔤
+# Magic Text
 
 Auto-responsive text widget that supports a multitude of parameters to control text rendering behaviour.
 
@@ -31,7 +31,7 @@ Run this command ```flutter pub add magic_text``` then run ```flutter pub get```
 Paste this line in dependencies section of pubspec.yaml file and run ```flutter pub get``` command.
 ```yaml
 dependencies:
-  magic_text: ^0.0.1
+  magic_text: ^0.0.3
 ```
 
 ### Import 
@@ -43,11 +43,10 @@ import 'package:magic_text/magic_text.dart';
 
 Instance MagicText widget:
 ```dart
-
 //Instance a MagicText widget and save in a constant.
 const MagicText magicText = MagicText(
   "The Flutter framework has been optimized to make rerunning build methods fast, so that you can just rebuild anything that needs updating rather than having to individually change instances of widgets.",
-  breakCharacter: '-',
+  breakWordCharacter: '-',
   smartSizeMode: true,
   asyncMode: true,
   minFontSize: 20,
@@ -57,13 +56,12 @@ const MagicText magicText = MagicText(
       fontWeight: FontWeight.bold
   ),
 );
-
 ```
 Full usage code examples:
 <br>
-[Simple Desktop app example](example/desktop_app_example.dart)
+[Resizable simple Desktop app example](example/desktop_app_example/main.dart)
 <br>
-[Mobile app example](example/mobile_app_example.dart)
+[Animated mobile app example](example/mobile_app_example/main.dart)
 <br>
 ## Additional information
 Developed By Enrique Sánchez Vicente.

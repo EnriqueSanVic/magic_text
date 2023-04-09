@@ -30,32 +30,27 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-
   MagicText magicText = MagicText(
     "The Flutter framework has been optimized to make rerunning build methods fast, so that you can just rebuild anything that needs updating rather than having to individually change instances of widgets.",
+    breakWordCharacter: '-',
     smartSizeMode: true,
     asyncMode: true,
     minFontSize: 11,
     maxFontSize: 28,
-    textStyle: const TextStyle(
-        fontSize: 20,
-        fontWeight: FontWeight.bold
-    ),
+    textStyle: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
   );
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Column(children: [
+        body: Column(
+      children: [
         Expanded(
             child: Container(
-              padding: const EdgeInsets.all(10),
-              child: magicText,
-            )
-        )
-      ],)
-    );
+          padding: const EdgeInsets.all(10),
+          child: magicText,
+        ))
+      ],
+    ));
   }
 }
-
-
