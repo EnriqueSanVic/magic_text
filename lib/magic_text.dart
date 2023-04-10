@@ -162,7 +162,7 @@ class _MagicTextState extends State<MagicText> {
     for (int i = 0; i < copyStringUnicodeUnits.length; i++) {
       nextStepLineWidth = actualLineWidth +
           _calculateCharWidth(copyStringUnicodeUnits[i], style) +
-          letterSpacing!;
+          letterSpacing;
 
       /**
        * if current character is a NULL character, then is a user string end of line
@@ -178,7 +178,7 @@ class _MagicTextState extends State<MagicText> {
        * if the width of the new string as a result of adding the current character
        * to be evaluated exceeds the maximum width.
        */
-      if (nextStepLineWidth > this._actualMaxWidth!) {
+      if (nextStepLineWidth > _actualMaxWidth!) {
         actualLineWidth = 0;
 
         //if the current character to be evaluated is a space, it is replaced by a end of line.
