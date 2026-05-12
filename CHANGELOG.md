@@ -1,3 +1,12 @@
+## 1.0.0
+
+- Dart 3 / Flutter 3.12+ support: updated SDK and Flutter constraints.
+- Replaced deprecated `textScaleFactor` with `textScaler: TextScaler.noScaling`.
+- Added `richTextMode` parameter for `InlineSpan` support.
+- Fixed `@immutable` compliance: all instance fields are now `final`.
+- Added full public API documentation to meet pub.dev scoring requirements.
+- Enabled `public_member_api_docs` lint rule.
+
 ## 0.0.1
 Auto-responsive text widget that supports a multitude of parameters to control text rendering behaviour.
 

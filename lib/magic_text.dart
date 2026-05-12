@@ -1,57 +1,154 @@
+/// Magic Text — auto-responsive Flutter text widget with intelligent word
+/// wrapping and optional font size optimisation.
+///
+/// See [MagicText] for the main widget.
+library magic_text;
+
 import 'dart:collection';
 
 import 'package:flutter/material.dart';
 
-/// Author: Enrique Sánchez Vicente
+/// A Flutter widget that renders text with automatic word wrapping and
+/// optional font size optimisation within a given container width.
+///
+/// [MagicText] calculates the exact pixel width of each character to
+/// determine line breaks, inserting a [breakWordCharacter] when a word
+/// must be split across lines.
+///
+/// When [magicSizeMode] is enabled the widget iterates font sizes between
+/// [minFontSize] and [maxFontSize] to find the size that minimises the number
+/// of word breaks, producing the most readable layout.
+///
+/// Supports both plain [String] text and rich [InlineSpan] content via the
+/// [richTextMode] flag.
+///
+/// Example:
+/// ```dart
+/// MagicText(
+///   'Hello, World!',
+///   textStyle: const TextStyle(fontSize: 24),
+///   minFontSize: 12,
+///   maxFontSize: 24,
+/// )
+/// ```
 @immutable
 class MagicText extends StatefulWidget {
-  final String data;
-  String? breakWordCharacter = '-';
+  /// The text content to display.
+  ///
+  /// Must be a [String] when [richTextMode] is `false` (the default), or an
+  /// [InlineSpan] when [richTextMode] is `true`.
+  final dynamic child;
+
+  /// The character inserted at the point where a word is broken across two
+  /// lines. Must be exactly one character long. Defaults to `'-'`.
+  final String? breakWordCharacter;
+
+  /// The base [TextStyle] used for rendering.
+  ///
+  /// Must have a non-null [TextStyle.fontSize]. When [magicSizeMode] is
+  /// enabled the font size is treated as the starting reference, and the
+  /// widget replaces it with the optimised size found between [minFontSize]
+  /// and [maxFontSize].
   final TextStyle textStyle;
+
+  /// Optional strut style applied to the underlying [Text] widget.
   final StrutStyle? strutStyle;
+
+  /// How the text should be aligned horizontally.
   final TextAlign? textAlign;
+
+  /// The locale used to select region-specific glyphs.
   final Locale? locale;
+
+  /// How visual overflow should be handled.
   final TextOverflow? overflow;
+
+  /// Maximum number of lines for the text to span.
   final int? maxLines;
+
+  /// An alternative semantics label for screen readers.
   final String? semanticsLabel;
+
+  /// Defines how to measure the width of the rendered text.
   final TextWidthBasis? textWidthBasis;
+
+  /// Defines how the paragraph will apply [TextStyle.height] to the ascent of
+  /// the first line and descent of the last line.
   final TextHeightBehavior? textHeightBehavior;
+
+  /// The colour used for the selection highlight when the text is selected.
   final Color? selectionColor;
 
-  bool smartSizeMode = true;
-  bool asyncMode = false;
+  /// When `true`, [child] must be an [InlineSpan] and the widget renders using
+  /// rich-text mode. Defaults to `false`.
+  final bool richTextMode;
 
-  final int? minFontSize, maxFontSize;
+  /// When `true`, the widget iterates font sizes from [minFontSize] to
+  /// [maxFontSize] to find the size with the fewest word breaks.
+  ///
+  /// Both [minFontSize] and [maxFontSize] are required when this is `true`,
+  /// and `minFontSize` must be ≤ `maxFontSize`. Defaults to `true`.
+  final bool magicSizeMode;
 
-  MagicText(this.data,
-      {super.key,
-      required this.smartSizeMode,
-      required this.asyncMode,
-      required this.textStyle,
-      this.breakWordCharacter,
-      this.strutStyle,
-      this.textAlign,
-      this.locale,
-      this.overflow,
-      this.maxLines,
-      this.semanticsLabel,
-      this.textWidthBasis,
-      this.textHeightBehavior,
-      this.selectionColor,
-      this.minFontSize,
-      this.maxFontSize}) {
+  /// When `true`, font size optimisation is scheduled as a post-frame callback
+  /// so it does not block the first frame. Defaults to `false`.
+  final bool asyncMode;
+
+  /// Minimum font size tried during [magicSizeMode] optimisation.
+  final int? minFontSize;
+
+  /// Maximum font size tried during [magicSizeMode] optimisation.
+  final int? maxFontSize;
+
+  /// Creates a [MagicText] widget.
+  ///
+  /// The [textStyle] must have a non-null [TextStyle.fontSize].
+  ///
+  /// When [magicSizeMode] is `true` (the default), both [minFontSize] and
+  /// [maxFontSize] must be provided and `minFontSize` must be ≤ `maxFontSize`.
+  ///
+  /// When [richTextMode] is `true`, [child] must be an [InlineSpan];
+  /// otherwise [child] must be a [String].
+  MagicText(
+    this.child, {
+    super.key,
+    required this.textStyle,
+    this.breakWordCharacter = '-',
+    this.magicSizeMode = true,
+    this.asyncMode = false,
+    this.richTextMode = false,
+    this.strutStyle,
+    this.textAlign,
+    this.locale,
+    this.overflow,
+    this.maxLines,
+    this.semanticsLabel,
+    this.textWidthBasis,
+    this.textHeightBehavior,
+    this.selectionColor,
+    this.minFontSize,
+    this.maxFontSize,
+  }) {
     assert(textStyle.fontSize != null,
-        "The textStyle object must have a defined fontSize attribute.");
+        'The textStyle object must have a defined fontSize attribute');
 
     assert(breakWordCharacter!.length == 1,
-        "The break character must be a string that only contains one character.");
+        'The break character must be a string that only contains one character');
 
-    if (smartSizeMode) {
+    if (magicSizeMode) {
       assert(
           minFontSize != null &&
               maxFontSize != null &&
               minFontSize! <= maxFontSize!,
-          "When use smart size mode, the params maxSize and minSize are mandatory, an minSize shout be less or equal than maxSize.");
+          'When use smart size mode, the params maxSize and minSize are mandatory, an minSize shout be less or equal than maxSize');
+    }
+
+    if (richTextMode) {
+      assert(child is InlineSpan,
+          'The type of child attribute must be of type InlineSpan if use richTextMode');
+    } else {
+      assert(child is String,
+          'The type of child attribute must be of type String, if you want use InlineSpan type, you must enable richTextMode in a widget parameters');
     }
   }
 
@@ -67,49 +164,50 @@ class _MagicTextState extends State<MagicText> {
   double? _actualMaxWidth;
   TextStyle? _textStyle;
 
+  /// Cache for widths of chars to optimize with memoization in font size check
   final Map<int, double> _charWidths = HashMap<int, double>();
 
   @override
   void initState() {
     _textStyle = widget.textStyle;
-
     super.initState();
   }
 
   void _changeOptimizeTextStyle() {
-    if (widget.asyncMode) {
-      () async {
-        WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-          if (mounted) {
-            setState(() {
-              _optimizeTextStyle();
-            });
-          }
-        });
-      }();
-    } else {
+    // execute not async mode
+    if (!widget.asyncMode) {
       _optimizeTextStyle();
+      return;
     }
+    // execute async mode
+    () async {
+      WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+        if (mounted) {
+          setState(() {
+            _optimizeTextStyle();
+          });
+        }
+      });
+    }();
   }
 
   void _optimizeTextStyle() {
-    int optimizedFontSize = _findMostOptimizedFontSize();
-    _textStyle =
-        widget.textStyle.copyWith(fontSize: optimizedFontSize.toDouble());
+    _textStyle = widget.textStyle
+        .copyWith(fontSize: _findMostOptimizedFontSize().toDouble());
   }
 
   int _findMostOptimizedFontSize() {
     String resultString;
     int? minStepCharacters;
     int countBreakCharacters;
-    int mostOptimizedTextSize = _textStyle!.fontSize!.toInt();
+    int mostOptimizedTextSize = widget.minFontSize!;
     TextStyle copyOfTextStyle;
 
     for (int i = widget.minFontSize!; i <= widget.maxFontSize!; i++) {
       copyOfTextStyle = widget.textStyle.copyWith(fontSize: i.toDouble());
 
       resultString = _processTextWrapEndOfLineCharacter(
-          widget.data, copyOfTextStyle, widget.breakWordCharacter!)!;
+          widget.child, copyOfTextStyle, widget.breakWordCharacter!)!;
 
       countBreakCharacters =
           widget.breakWordCharacter!.allMatches(resultString).length;
@@ -131,11 +229,11 @@ class _MagicTextState extends State<MagicText> {
 
   String? _processTextWrapEndOfLineCharacter(
       String originalString, TextStyle style, String stepChar) {
-    List<int> originalStringUnicodeUnits = originalString.codeUnits;
-    List<int> copyStringUnicodeUnits = [];
-    List<int> resultStringChars = [];
+    final List<int> originalStringUnicodeUnits = originalString.codeUnits;
+    final List<int> copyStringUnicodeUnits = [];
+    final List<int> resultStringChars = [];
 
-    _charWidths.clear();
+    final double letterSpacing = style.letterSpacing ?? 0;
 
     int resultIndex = 0;
     int auxChar;
@@ -145,20 +243,14 @@ class _MagicTextState extends State<MagicText> {
 
     int stepUnicodeChar = stepChar.codeUnitAt(0);
 
-    ///replace originals \n characters for null characters
-    for (int j = 0; j < originalStringUnicodeUnits.length; j++) {
-      if (originalStringUnicodeUnits[j] == END_OF_LINE_CODE_UNIT) {
-        copyStringUnicodeUnits.add(NULL_CHAR_UNIT);
-        continue;
-      }
+    // Clear char widths cache
+    _charWidths.clear();
 
-      copyStringUnicodeUnits.add(originalStringUnicodeUnits[j]);
-    }
+    // Replace originals \n characters for NULL characters
+    _replaceLineBreakCharsByNullChars(
+        originalStringUnicodeUnits, copyStringUnicodeUnits);
 
-    double? letterSpacing = style.letterSpacing;
-
-    letterSpacing ??= 0;
-
+    // Iterate each original text characters
     for (int i = 0; i < copyStringUnicodeUnits.length; i++) {
       nextStepLineWidth = actualLineWidth +
           _calculateCharWidth(copyStringUnicodeUnits[i], style) +
@@ -232,20 +324,35 @@ class _MagicTextState extends State<MagicText> {
         resultIndex++;
         actualLineWidth +=
             _calculateCharWidth(copyStringUnicodeUnits[i], style);
-      } else {
-        if (i > 0 &&
-            copyStringUnicodeUnits[i - 1] == END_OF_LINE_CODE_UNIT &&
-            copyStringUnicodeUnits[i] == SPACE_CODE_UNIT) {
-          continue;
-        }
-
-        resultStringChars.add(copyStringUnicodeUnits[i]);
-        ++resultIndex;
-        actualLineWidth = nextStepLineWidth;
+        continue;
       }
+
+      //  If previous char is End of line and current char is space char, continue
+      if (i > 0 &&
+          copyStringUnicodeUnits[i - 1] == END_OF_LINE_CODE_UNIT &&
+          copyStringUnicodeUnits[i] == SPACE_CODE_UNIT) {
+        continue;
+      }
+
+      // Add current original character to result
+      resultStringChars.add(copyStringUnicodeUnits[i]);
+      ++resultIndex;
+      actualLineWidth = nextStepLineWidth;
     }
 
     return String.fromCharCodes(resultStringChars);
+  }
+
+  void _replaceLineBreakCharsByNullChars(
+      List<int> originalStringUnicodeUnits, List<int> copyStringUnicodeUnits) {
+    for (int j = 0; j < originalStringUnicodeUnits.length; j++) {
+      if (originalStringUnicodeUnits[j] == END_OF_LINE_CODE_UNIT) {
+        copyStringUnicodeUnits.add(NULL_CHAR_UNIT);
+        continue;
+      }
+
+      copyStringUnicodeUnits.add(originalStringUnicodeUnits[j]);
+    }
   }
 
   double _calculateCharWidth(int unicodeChar, TextStyle style) {
@@ -271,14 +378,14 @@ class _MagicTextState extends State<MagicText> {
       ///only recalculate text style if change maxWidth of constraints
       if (_actualMaxWidth != constraints.maxWidth) {
         _actualMaxWidth = constraints.maxWidth;
-        if (widget.smartSizeMode) {
+        if (widget.magicSizeMode) {
           _changeOptimizeTextStyle();
         }
       }
 
       return Text(
           _processTextWrapEndOfLineCharacter(
-              widget.data, _textStyle!, widget.breakWordCharacter!)!,
+              widget.child, _textStyle!, widget.breakWordCharacter!)!,
           style: _textStyle,
           strutStyle: widget.strutStyle,
           textAlign: widget.textAlign,
@@ -286,7 +393,7 @@ class _MagicTextState extends State<MagicText> {
           locale: widget.locale,
           softWrap: false,
           overflow: widget.overflow,
-          textScaleFactor: 1.0,
+          textScaler: TextScaler.noScaling,
           maxLines: widget.maxLines,
           semanticsLabel: widget.semanticsLabel,
           textWidthBasis: widget.textWidthBasis,
