@@ -1,3 +1,19 @@
+## 1.0.1
+
+- Fixed crash when `richTextMode: true` — the widget now renders via `RichText`
+  instead of calling the string word-wrap logic on an `InlineSpan`.
+- Fixed missing `didUpdateWidget`: `textStyle` changes from the parent widget
+  are now reflected correctly without needing a hot-restart.
+- Changed `magicSizeMode` default from `true` to `false` to avoid a runtime
+  assert when `minFontSize`/`maxFontSize` are not provided.
+- Fixed `breakWordCharacter` null-check assert producing a cryptic error.
+- Explicit `as String` / `as InlineSpan` casts replace `dynamic` dispatch in
+  the rendering path.
+- Removed debug `print()` from the mobile example.
+- Fixed README usage example (`const MagicText` is not valid — constructor has
+  a body).
+- Updated README version reference to `^1.0.0`.
+
 ## 1.0.0
 
 - Dart 3 / Flutter 3.12+ support: updated SDK and Flutter constraints.

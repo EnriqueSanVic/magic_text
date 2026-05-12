@@ -60,7 +60,6 @@ class _MyHomePageState extends State<MyHomePage> {
       containerWidth = (step / 4) * originalWidth!;
     });
 
-    print('step $step, originalWidth: $originalWidth , containerWidth: $containerWidth');
   }
 
   @override

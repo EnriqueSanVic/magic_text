@@ -31,7 +31,7 @@ Paste this line in dependencies section of pubspec.yaml file and run `flutter pu
 
 ```yaml
 dependencies:
-  magic_text: ^0.0.3
+  magic_text: ^1.0.0
 ```
 
 ### Import
@@ -45,8 +45,7 @@ import 'package:magic_text/magic_text.dart';
 Instance MagicText widget:
 
 ```dart
-//Instance a MagicText widget and save in a constant.
-const MagicText magicText = MagicText(
+final MagicText magicText = MagicText(
   "The Flutter framework has been optimized to make rerunning build methods fast, so that you can just rebuild anything that needs updating rather than having to individually change instances of widgets.",
   breakWordCharacter: '-',
   magicSizeMode: true,
@@ -54,8 +53,8 @@ const MagicText magicText = MagicText(
   minFontSize: 20,
   maxFontSize: 40,
   textStyle: const TextStyle(
-      fontSize: 20, //It is mandatory that the textStyle has a fontsize.
-      fontWeight: FontWeight.bold
+    fontSize: 20, // textStyle.fontSize is required
+    fontWeight: FontWeight.bold,
   ),
 );
 ```

@@ -20,13 +20,15 @@ import 'package:flutter/material.dart';
 /// of word breaks, producing the most readable layout.
 ///
 /// Supports both plain [String] text and rich [InlineSpan] content via the
-/// [richTextMode] flag.
+/// [richTextMode] flag. Note that word wrapping and [magicSizeMode]
+/// optimisation are not applied in [richTextMode].
 ///
 /// Example:
 /// ```dart
 /// MagicText(
 ///   'Hello, World!',
 ///   textStyle: const TextStyle(fontSize: 24),
+///   magicSizeMode: true,
 ///   minFontSize: 12,
 ///   maxFontSize: 24,
 /// )
@@ -80,18 +82,24 @@ class MagicText extends StatefulWidget {
   final Color? selectionColor;
 
   /// When `true`, [child] must be an [InlineSpan] and the widget renders using
-  /// rich-text mode. Defaults to `false`.
+  /// [RichText]. Word wrapping and [magicSizeMode] are not applied in this
+  /// mode. Defaults to `false`.
   final bool richTextMode;
 
   /// When `true`, the widget iterates font sizes from [minFontSize] to
   /// [maxFontSize] to find the size with the fewest word breaks.
   ///
   /// Both [minFontSize] and [maxFontSize] are required when this is `true`,
-  /// and `minFontSize` must be ≤ `maxFontSize`. Defaults to `true`.
+  /// and `minFontSize` must be ≤ `maxFontSize`. Has no effect when
+  /// [richTextMode] is `true`. Defaults to `false`.
   final bool magicSizeMode;
 
   /// When `true`, font size optimisation is scheduled as a post-frame callback
   /// so it does not block the first frame. Defaults to `false`.
+  ///
+  /// Recommended when using wide [minFontSize]–[maxFontSize] ranges, as the
+  /// optimisation loop can be expensive. The view loads first and [MagicText]
+  /// updates once ready without blocking the main rendering thread.
   final bool asyncMode;
 
   /// Minimum font size tried during [magicSizeMode] optimisation.
@@ -104,8 +112,8 @@ class MagicText extends StatefulWidget {
   ///
   /// The [textStyle] must have a non-null [TextStyle.fontSize].
   ///
-  /// When [magicSizeMode] is `true` (the default), both [minFontSize] and
-  /// [maxFontSize] must be provided and `minFontSize` must be ≤ `maxFontSize`.
+  /// When [magicSizeMode] is `true`, both [minFontSize] and [maxFontSize] must
+  /// be provided and `minFontSize` must be ≤ `maxFontSize`.
   ///
   /// When [richTextMode] is `true`, [child] must be an [InlineSpan];
   /// otherwise [child] must be a [String].
@@ -114,7 +122,7 @@ class MagicText extends StatefulWidget {
     super.key,
     required this.textStyle,
     this.breakWordCharacter = '-',
-    this.magicSizeMode = true,
+    this.magicSizeMode = false,
     this.asyncMode = false,
     this.richTextMode = false,
     this.strutStyle,
@@ -132,23 +140,24 @@ class MagicText extends StatefulWidget {
     assert(textStyle.fontSize != null,
         'The textStyle object must have a defined fontSize attribute');
 
-    assert(breakWordCharacter!.length == 1,
-        'The break character must be a string that only contains one character');
+    assert(
+        breakWordCharacter != null && breakWordCharacter!.length == 1,
+        'The break character must be a non-null string that only contains one character');
 
     if (magicSizeMode) {
       assert(
           minFontSize != null &&
               maxFontSize != null &&
               minFontSize! <= maxFontSize!,
-          'When use smart size mode, the params maxSize and minSize are mandatory, an minSize shout be less or equal than maxSize');
+          'When magicSizeMode is enabled, minFontSize and maxFontSize are required and minFontSize must be <= maxFontSize');
     }
 
     if (richTextMode) {
       assert(child is InlineSpan,
-          'The type of child attribute must be of type InlineSpan if use richTextMode');
+          'child must be an InlineSpan when richTextMode is true');
     } else {
       assert(child is String,
-          'The type of child attribute must be of type String, if you want use InlineSpan type, you must enable richTextMode in a widget parameters');
+          'child must be a String when richTextMode is false; set richTextMode: true to use an InlineSpan');
     }
   }
 
@@ -164,13 +173,23 @@ class _MagicTextState extends State<MagicText> {
   double? _actualMaxWidth;
   TextStyle? _textStyle;
 
-  /// Cache for widths of chars to optimize with memoization in font size check
+  /// Cache for character widths — memoised to avoid re-measuring the same
+  /// glyph repeatedly during the font size optimisation loop.
   final Map<int, double> _charWidths = HashMap<int, double>();
 
   @override
   void initState() {
     _textStyle = widget.textStyle;
     super.initState();
+  }
+
+  @override
+  void didUpdateWidget(MagicText oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.textStyle != widget.textStyle) {
+      _textStyle = widget.textStyle;
+      _actualMaxWidth = null; // force re-optimisation on next build
+    }
   }
 
   void _changeOptimizeTextStyle() {
@@ -207,7 +226,7 @@ class _MagicTextState extends State<MagicText> {
       copyOfTextStyle = widget.textStyle.copyWith(fontSize: i.toDouble());
 
       resultString = _processTextWrapEndOfLineCharacter(
-          widget.child, copyOfTextStyle, widget.breakWordCharacter!)!;
+          widget.child as String, copyOfTextStyle, widget.breakWordCharacter!)!;
 
       countBreakCharacters =
           widget.breakWordCharacter!.allMatches(resultString).length;
@@ -322,8 +341,7 @@ class _MagicTextState extends State<MagicText> {
         ///Add current character
         resultStringChars.add(copyStringUnicodeUnits[i]);
         resultIndex++;
-        actualLineWidth +=
-            _calculateCharWidth(copyStringUnicodeUnits[i], style);
+        actualLineWidth += _calculateCharWidth(copyStringUnicodeUnits[i], style);
         continue;
       }
 
@@ -373,19 +391,32 @@ class _MagicTextState extends State<MagicText> {
 
   @override
   Widget build(BuildContext context) {
-    return LayoutBuilder(
-        builder: (BuildContext context, BoxConstraints constraints) {
-      ///only recalculate text style if change maxWidth of constraints
+    return LayoutBuilder(builder: (BuildContext context, BoxConstraints constraints) {
       if (_actualMaxWidth != constraints.maxWidth) {
         _actualMaxWidth = constraints.maxWidth;
-        if (widget.magicSizeMode) {
+        if (widget.magicSizeMode && !widget.richTextMode) {
           _changeOptimizeTextStyle();
         }
       }
 
+      if (widget.richTextMode) {
+        return RichText(
+          text: widget.child as InlineSpan,
+          textAlign: widget.textAlign ?? TextAlign.start,
+          textDirection: TextDirection.ltr,
+          locale: widget.locale,
+          softWrap: true,
+          overflow: widget.overflow ?? TextOverflow.clip,
+          textScaler: TextScaler.noScaling,
+          maxLines: widget.maxLines,
+          textWidthBasis: widget.textWidthBasis ?? TextWidthBasis.parent,
+          textHeightBehavior: widget.textHeightBehavior,
+        );
+      }
+
       return Text(
           _processTextWrapEndOfLineCharacter(
-              widget.child, _textStyle!, widget.breakWordCharacter!)!,
+              widget.child as String, _textStyle!, widget.breakWordCharacter!)!,
           style: _textStyle,
           strutStyle: widget.strutStyle,
           textAlign: widget.textAlign,

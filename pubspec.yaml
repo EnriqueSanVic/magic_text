@@ -1,6 +1,6 @@
 name: magic_text
 description: Auto-responsive text widget that supports a multitude of parameters to control text rendering behaviour.
-version: 1.0.0
+version: 1.0.1
 repository: https://github.com/EnriqueSanVic/magic_text
 
 environment:
