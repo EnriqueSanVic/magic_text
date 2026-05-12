@@ -60,14 +60,12 @@ class _MyHomePageState extends State<MyHomePage> {
       containerWidth = (step / 4) * originalWidth!;
     });
 
-    print(
-        'step $step, originalWidth: $originalWidth , containerWidth: $containerWidth');
+    print('step $step, originalWidth: $originalWidth , containerWidth: $containerWidth');
   }
 
   @override
   Widget build(BuildContext context) {
-    containerWidth ??=
-        MediaQuery.of(context).size.width - HORIZONTAL_CONTAINER_MARGIN * 2;
+    containerWidth ??= MediaQuery.of(context).size.width - HORIZONTAL_CONTAINER_MARGIN * 2;
 
     return Scaffold(
         backgroundColor: const Color.fromARGB(255, 40, 40, 40),
@@ -79,31 +77,25 @@ class _MyHomePageState extends State<MyHomePage> {
                 duration: const Duration(milliseconds: 600),
                 curve: Curves.decelerate,
                 padding: const EdgeInsets.all(15),
-                margin: const EdgeInsets.fromLTRB(HORIZONTAL_CONTAINER_MARGIN,
-                    40, HORIZONTAL_CONTAINER_MARGIN, 30),
+                margin: const EdgeInsets.fromLTRB(HORIZONTAL_CONTAINER_MARGIN, 40, HORIZONTAL_CONTAINER_MARGIN, 30),
                 width: containerWidth,
                 decoration: const BoxDecoration(
-                    color: Color.fromARGB(255, 242, 25, 105),
-                    borderRadius: BorderRadius.all(Radius.circular(20))),
+                    color: Color.fromARGB(255, 242, 25, 105), borderRadius: BorderRadius.all(Radius.circular(20))),
                 child: LayoutBuilder(
                   builder: (BuildContext, BoxConstraints) {
                     if (originalWidth == null) {
-                      originalWidth =
-                          BoxConstraints.maxWidth + HORIZONTAL_CONTAINER_MARGIN;
+                      originalWidth = BoxConstraints.maxWidth + HORIZONTAL_CONTAINER_MARGIN;
                       _initAnimation();
                     }
 
                     MagicText magicText = MagicText(
                       "The Flutter framework has been optimized to make rerunning build methods fast, so that you can just rebuild anything that needs updating rather than having to individually change instances of widgets.",
                       breakWordCharacter: '-',
-                      smartSizeMode: true,
+                      magicSizeMode: true,
                       asyncMode: true,
                       minFontSize: 19,
                       maxFontSize: 26,
-                      textStyle: const TextStyle(
-                          fontSize: 20,
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold),
+                      textStyle: const TextStyle(fontSize: 20, color: Colors.white, fontWeight: FontWeight.bold),
                     );
 
                     return magicText;
